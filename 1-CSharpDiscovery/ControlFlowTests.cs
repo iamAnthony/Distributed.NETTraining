@@ -1,5 +1,6 @@
 ﻿using NFluent;
 using NUnit.Framework;
+using System.Text;
 
 namespace CSharpDiscovery
 {
