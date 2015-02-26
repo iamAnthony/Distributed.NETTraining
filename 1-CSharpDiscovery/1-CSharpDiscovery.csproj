@@ -50,6 +50,7 @@
     <Compile Include="ArraysTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ClassesTests.cs" />
     <Compile Include="ControlFlowTests.cs">
       <SubType>Code</SubType>
     </Compile>
