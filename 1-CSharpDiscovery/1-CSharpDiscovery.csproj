@@ -54,8 +54,10 @@
     <Compile Include="ControlFlowTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="InheritanceAndPolymorphismTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypesTests.cs" />
+    <Compile Include="ValueTypesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />

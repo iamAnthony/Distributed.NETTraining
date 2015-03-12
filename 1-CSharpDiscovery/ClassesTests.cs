@@ -82,6 +82,7 @@ namespace CSharpDiscovery
             var calculator = new Calculator();
             var onePlusTwo = calculator.Sum(sumOfTwoDoubleFromString);
 
+
             Check.That(onePlusTwo).Equals(3.0);
         }
 
@@ -121,6 +122,7 @@ namespace CSharpDiscovery
         //public void StaticReadonlyMembers()
         //{
         //    var sumOfADoubleAndPiConstant = "1,2 + pi";
+
         //     replace pi constant with a static readonly member
         //    Check.That(sum).Equals(4.34);
         //}
