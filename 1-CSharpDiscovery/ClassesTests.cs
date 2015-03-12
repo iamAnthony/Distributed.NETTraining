@@ -1,4 +1,5 @@
-﻿using NFluent;
+﻿using System.Linq;
+using NFluent;
 using NUnit.Framework;
 
 namespace CSharpDiscovery
@@ -6,16 +7,15 @@ namespace CSharpDiscovery
 
     public class Calculator
     {
-        private string name;
         private const double pi = 3.14;
         public Calculator()
         {
-            name = "Calculator";
+            Name = "Calculator";
         }
 
         public Calculator(string _name)
         {
-            name = _name;
+            Name = _name;
         }
 
         public double Sum(double[] array)
@@ -25,7 +25,7 @@ namespace CSharpDiscovery
 
         public double Sum(string operation)
         {
-            var numbers = operation.Split('+');
+            var numbers = operation.Split('+').Select(s => 2);
             for (int i = 0; i < numbers.Length; i++ )
             {
                 if (numbers[i].Trim().Equals("pi"))
@@ -34,16 +34,7 @@ namespace CSharpDiscovery
             return (double.Parse(numbers[0].Trim()) + double.Parse(numbers[1].Trim()));
         }
 
-        public string Name
-        {
-            get{
-                return name;
-            }
-            set
-            {
-                name = value;
-            }
-        }
+        public string Name { get; set; }
     }
     [TestFixture]
     public class ClassesTests
