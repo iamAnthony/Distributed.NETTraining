@@ -1,0 +1,7 @@
+﻿namespace CSharpDiscovery
+{
+    class StringCalculator
+    {
+        
+    }
+}
