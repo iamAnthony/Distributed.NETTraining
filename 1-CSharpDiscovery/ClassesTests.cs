@@ -7,7 +7,6 @@ namespace CSharpDiscovery
     public class Calculator
     {
         private string name;
-        private const double pi = 3.14;
         public Calculator()
         {
             name = "Calculator";
@@ -18,20 +17,9 @@ namespace CSharpDiscovery
             name = _name;
         }
 
-        public double Sum(double[] array)
+        public virtual double Sum(double[] array)
         {
             return array[0] + array[1];
-        }
-
-        public double Sum(string operation)
-        {
-            var numbers = operation.Split('+');
-            for (int i = 0; i < numbers.Length; i++ )
-            {
-                if (numbers[i].Trim().Equals("pi"))
-                    numbers[i] = pi.ToString();
-            }
-            return (double.Parse(numbers[0].Trim()) + double.Parse(numbers[1].Trim()));
         }
 
         public string Name
@@ -79,7 +67,7 @@ namespace CSharpDiscovery
             var sumOfTwoDoubleFromString = "1,0+2";
             // add a method with the same name that uses the previous method
             // tips : use string.Split
-            var calculator = new Calculator();
+            var calculator = new StringCalculator();
             var onePlusTwo = calculator.Sum(sumOfTwoDoubleFromString);
 
 
@@ -112,7 +100,7 @@ namespace CSharpDiscovery
         public void DefineConstantForPi()
         {
             var sumOfADoubleAndPiConstant = "1,2 + pi";
-            var calculator = new Calculator();
+            var calculator = new StringCalculator();
             var sum = calculator.Sum(sumOfADoubleAndPiConstant);
             // define pi constant (as double) and replace pi string with constant value
             Check.That(sum).Equals(4.34);
