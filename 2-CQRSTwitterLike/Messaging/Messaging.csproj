@@ -45,6 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\MessagingModule.cs" />
+    <Compile Include="Infrastructure\TimelineMessage.cs" />
+    <Compile Include="Infrastructure\TimelineMessageRepository.cs" />
+    <Compile Include="Infrastructure\UserId.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
