@@ -6,13 +6,15 @@
     [TestFixture]
     public class InheritanceAndPolymorphismTests
     {
-        //[Test]
-        //public void SplitCalculatorClassInTwoClasses()
-        //{
-        //    // Create a StringCalculator class that derives from Calculator, and move Sum with string paremeter, instantiate the two classes
-        //    // Make StringCalculator sealed, try to create a derived class from it => compiler complains
-        //    Check.That(calculator.Sum(new[] {1.3, 1.8})).Equals(stringCalculator.Sum("1,3+1,8"));
-        //}
+        [Test]
+        public void SplitCalculatorClassInTwoClasses()
+        {
+            // Create a StringCalculator class that derives from Calculator, and move Sum with string paremeter, instantiate the two classes
+            // Make StringCalculator sealed, try to create a derived class from it => compiler complains
+            var calculator = new Calculator();
+            var stringCalculator = new StringCalculator();
+            Check.That(calculator.Sum(new[] { 1.3, 1.8 })).Equals(stringCalculator.Sum("1,3+1,8"));
+        }
 
         //[Test]
         //public void DefineAnIntegerCalculatorClassThatReplacesSumMethodOfCalculator()
