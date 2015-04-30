@@ -1,0 +1,320 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Applications distribuées en .NET</title>
+    <meta name="description" content="Cours sur les applications distribuées en .NET">
+    <meta name="author" content="Clément Bouillier">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="../RevealJS/css/reveal.min.css">
+    <link rel="stylesheet" href="../RevealJS/css/custom.css">
+    <link rel="stylesheet" href="../RevealJS/css/theme/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="../RevealJS/lib/css/zenburn.css">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if (window.location.search.match(/print-pdf/gi)) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = '../RevealJS/css/print/pdf.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    </script>
+    <!--[if lt IE 9]>
+    <script src="../RevealJS/lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="reveal">
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section>
+                <h1>Applications distribuées en .NET</h1>
+                <h3>Première implémentation avec CQRS et l'Event Sourcing</h3>
+                <p>
+                    <small>Clément Bouillier - <a href="http://www.devcrafting.com">Devcrafting</a> - <a href="http://twitter.com/clem_bouillier">@clem_bouillier</a></small>
+                </p>
+            </section>
+            <section>
+                <section>
+                    <h2>Un peu de contexte par rapport à CQRS et l'Event Sourcing</h2>
+                </section>
+                <section>
+                    <h3>
+                        Rappel : CQRS conceptuel
+                    </h3>
+                    <img src="Conceptual CQRS.png" alt="Conceptual CQRS schema : UX, Command and Query representation with main concepts involved" />
+                </section>
+                <section>
+                    <h3>
+                        Rappel : CQRS conceptuel
+                    </h3>
+                    <ol>
+                        <li>L'utilisateur interagit avec l'application et le monde réel, pour prendre des décisions</li>
+                        <li class="fragment">La partie Command traite les décisions demandées par l'utilisateur</li>
+                        <li class="fragment">La partie Query permet d'afficher à l'utilisateur les données lui permettant de prendre d'autres décisions</li>
+                        <li class="fragment">Les événements métier sont les pivots entre Command et Query</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Pourquoi CQRS et Event Sourcing ?
+                    </h3>
+                    <ol>
+                        <li>Beaucoup plus de READ que de WRITE donc autant séparer les modèles</li>
+                        <li class="fragment">Stocker les événements modifiant le système plutôt que son état actuel : le modèle est plus riche en information métier</li>
+                        <li class="fragment">"Complexité accidentelle" limitée : pas de modèle unique (+ORM, BD unique...), moins de besoins frameworks</li>
+                        <li class="fragment">Code plus simple, plus découplé, plus testable et plus orienté micro-services</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Comparaison schématique d'une architecture N-tiers classique et d'une architecture orientée CQRS/Event Sourcing
+                    </h3>
+                    <img src="N-tiers vs CQRS.png" alt="Schema with typical N-tier architecture compared to CQRS style architecture" />
+                    Pour aller plus loin: <a href="http://fr.slideshare.net/tjaskula/cqr-sv2">très bonne présentation</a> de différents styles d'architecture (dont N-tiers et CQRS)
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Quelques pistes avant de commencer</h2>
+                </section>
+                <section>
+                    <h3>
+                        Nos amis pour cette session
+                    </h3>
+                    <ol>
+                        <li>La MSDN sur C# : https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx</li>
+                        <li class="fragment">Mais aussi votre moteur de recherche préféré</li>
+                        <li class="fragment">Object Browser dans Visual Studio</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Quelques contraintes pour s'initier au TDD/TDL et au Pair Programming
+                    </h3>
+                    <ol>
+                        <li>Pair Programming : les 2 personnes sont actives, le clavier DOIT être échangé</li>
+                        <li class="fragment">Quand on n'a pas le clavier, il faut guider l'autre, discuter...pas attendre qu'il ait fini</li>
+                        <li class="fragment">TDD/TDL : cycle red->green->refactor</li>
+                        <li class="fragment">On utilise tous la même norme de code (via StyleCop + R# ?)</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        En pratique pour ce TD
+                    </h3>
+                    <ol>
+                        <li>Repository GitHub : git clone https://github.com/devcrafting/Distributed.NETTraining.git (ou fork + clone)</li>
+                        <li class="fragment">Un tag par étape, le tag de l'étape en cours sera affiché dans ce support</li>
+                        <li class="fragment">Pour chaque tag, de nouvelles classes et de nouveaux tests à décommenter au fur et à mesure</li>
+                        <li class="fragment">Pour les tests, on utilise NUnit et NFluent (récupérés via NuGet)</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Ce que contient la solution fournie
+                    </h3>
+                    <ol>
+                        <li>Une librairie pour le contexte Messaging de l'application Twitter-like modélisée en Event Storming</li>
+                        <li class="fragment">Une libraire de test pour Messaging</li>
+                        <li class="fragment">Dans chaque librairie, une séparation Domain (métier)/Infrastructure (technique)</li>
+                        <li class="fragment">Une API HTTP (REST?!) faites avec <a href="http://nancyfx.org/">Nancy FX</a>, à requêter avec un client rest (plugins <a href="https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo/">Advanced REST</a> sur Chrome ou <a href="https://addons.mozilla.org/fr/firefox/addon/restclient/">RESTClient</a> sur Firefox)</li>
+                    </ol>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Itération 1 : implémenter un read model permettant d'afficher une liste de tweets</h2>
+                </section>
+                <section>
+                    <h3>
+                        Pattern Repository
+                    </h3>
+                    <ol>
+                        <li class="fragment">Objet représentant une liste d'objets/structures</li>
+                        <li class="fragment">Avec des méthodes de manipulations du type GetByXXX, GetAll, Save</li>
+                        <li class="fragment">Abstraction courante d'une entité/d'un groupe d'entité SQL ou d'une collection MongoDB par exemple</li>
+                        <li class="fragment">Proche du pattern DAO, mais différent (moins proche de la base, plus proche du domaine métier)</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Injection de dépendance/inversion de contrôle (DI/Ioc)
+                    </h3>
+                    <ol>
+                        <li class="fragment">Un concept sous-jacent : Dependency Inversion (le D de l'acronyme SOLID)</li>
+                        <li class="fragment">Externaliser l'instanciation des dépendances d'un objet et les abstraire avec une interface (l'implémentation doit être un détail)</li>
+                        <li class="fragment">Enregistrer les implémentations avec leurs abstractions</li>
+                        <li class="fragment">Avec Nancy : la plupart des engistrements sont faits automatiquement sur convention de nommage (Super Happy Dappy Path)</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Nancy FX
+                    </h3>
+                    <ol>
+                        <li class="fragment">Une route (i.e URL) = une fonction (ou lambda)</li>
+                        <li class="fragment">Le type du retour est "négocié" en fonction du header Accept de la requête</li>
+                        <li class="fragment">Il suffit donc de retourner les objets récupérer dans le repository</li>
+                        <li class="fragment">Pour obtenir du JSON, il faudra utiliser "application/json" dans le client REST</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Immutabilité
+                    </h3>
+                    <ol>
+                        <li class="fragment">Propriété d'un objet de ne pas pouvoir être modifié</li>
+                        <li class="fragment">Réduit les risques d'effet de bord (très courant en programmation fonctionnelle)</li>
+                        <li class="fragment">"Simulation" en objet avec des constructeurs avec paramètres, des attributs "readonly" et PAS DE SETTER</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Affichage de la timeline -> tag TD_ReadModel_TimelineMessage
+                    </h3>
+                    Nous avons besoin des éléments suivants :
+                    <ol>
+                        <li class="fragment">Une structure TimelineMessage (read model) - TimelineMessageTests</li>
+                        <li class="fragment">Une interface du Repository de ces structures - TimelineMessageRepositoryTests</li>
+                        <li class="fragment">Une implémentation du Repository avec stockage en mémoire (champs privé IEnumerable&lt;TimelineMessage&gt;)</li>
+                        <li class="fragment">Utiliser ce repository dans le module Nancy pour la route "/messaging/timelineMessages" - MessagingModule</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Retrospective
+                    </h3>
+                    <ol>
+                        <li class="fragment">Qu'est-ce qui c'est bien passé ?</li>
+                        <li class="fragment">Quels ont été les points difficiles ?</li>
+                        <li class="fragment">Qu'est-ce que vous avez appris ?</li>
+                        <li class="fragment">Quels sont les points qui vous perturbent encore ?</li>
+                    </ol>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Itération 2 : projections permettant d'obtenir les read models à partir d'événements</h2>
+                </section>
+                <section>
+                    <h3>
+                        Evénements ayant un impact sur le read model TimelineMessage
+                    </h3>
+                    <ol>
+                        <li class="fragment">MessagePublished</li>
+                        <li class="fragment">FollowerMessagePublished</li>
+                        <li class="fragment">FollowerMessageRepublished</li>
+                        <li class="fragment">FollowerMessageLiked</li>
+                        <li class="fragment">MessageDeleted</li>
+                        <li class="fragment">...</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Projections -> tag TD_Projections_TimelineMessage
+                    </h3>
+                    <ol>
+                        <li class="fragment">Une projection est classe traitant un événément à la fois pour transformer un read model à la fois (séparation des responsabilités)</li>
+                        <li class="fragment">Signature typique de la méthode de traitement : void Handle([TypeEvent] @event)</li>
+                        <li class="fragment">On peut conserver l'immutabilité avec une surcharge des constructeurs</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Retrospective
+                    </h3>
+                    <ol>
+                        <li class="fragment">Qu'est-ce qui c'est bien passé ?</li>
+                        <li class="fragment">Quels ont été les points difficiles ?</li>
+                        <li class="fragment">Qu'est-ce que vous avez appris ?</li>
+                        <li class="fragment">Quels sont les points qui vous perturbent encore ?</li>
+                    </ol>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Itération 3 : agrégats levant des événements en conséquence de commandes</h2>
+                </section>
+                <section>
+                    <h3>
+                        Agrégat racine (AggregateRoot)
+                    </h3>
+                    <ol>
+                        <li class="fragment">Objet garantissant la consistance des changements réalisés en son sein => encapsulation nécessaire (i.e pas de setters, ni de getters)</li>
+                        <li class="fragment">Conserve seulement dans un état interne ce dont il a besoin pour prendre des décisions ultérieures</li>
+                        <li class="fragment">L'état est construit à partir des événements que l'agrégat lève lui-même (ET UNIQUEMENT par ce biais)</li>
+                        <li class="fragment">Cela permet de reconstruire un agrégat à partir de l'historique des événements qui aura été stocké (Event Sourcing)</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Pattern Publish/Subscribe
+                    </h3>
+                    <ol>
+                        <li class="fragment">Objet gérant la diffusion des événements</li>
+                        <li class="fragment">Différentes utilisations pour les Events : passé en paramètre des méthodes de l'agrégat, conserver une liste des Events non "committés" + Repository.Save, retourner la liste des Events générés par les méthodes de l'agrégat</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Agrégat Message et les commandes associées -> tag TD_Agregat_Message
+                    </h3>
+                    <ol>
+                        <li class="fragment">Utiliser la technique du passage en paramère de l'EventPublisher (pattern Publish/Subscribe), avec une interface</li>
+                        <li class="fragment">L'agrégat Message va assurer qu'un message n'est pas republié par son auteur</li>
+                        <li class="fragment">Mais également qu'un message ne peut pas être republié 2 fois par le même compte</li>
+                        <li class="fragment">Ou encore que la suppression ne peut se faire que par l'auteur (/!\ une suppression "administrative" serait gérée par une autre commande)</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Retrospective
+                    </h3>
+                    <ol>
+                        <li class="fragment">Qu'est-ce qui c'est bien passé ?</li>
+                        <li class="fragment">Quels ont été les points difficiles ?</li>
+                        <li class="fragment">Qu'est-ce que vous avez appris ?</li>
+                        <li class="fragment">Quels sont les points qui vous perturbent encore ?</li>
+                    </ol>
+                </section>
+            </section>
+        </div>
+    </div>
+    <script src="../RevealJS/lib/js/head.min.js"></script>
+    <script src="../RevealJS/js/reveal.min.js"></script>
+    <script>
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            theme: 'night', // available themes are in /css/theme
+            transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Parallax scrolling
+            // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+            // parallaxBackgroundSize: '2100px 900px',
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+            ]
+        });
+
+    </script>
+</body>
+</html>

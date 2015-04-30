@@ -1,0 +1,273 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Applications distribuées en .NET</title>
+    <meta name="description" content="Cours sur les applications distribuées en .NET">
+    <meta name="author" content="Clément Bouillier">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="../RevealJS/css/reveal.min.css">
+    <link rel="stylesheet" href="../RevealJS/css/theme/default.css" id="theme">
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="../RevealJS/lib/css/zenburn.css">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if (window.location.search.match(/print-pdf/gi)) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = '../RevealJS/css/print/pdf.css';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    </script>
+    <!--[if lt IE 9]>
+    <script src="../RevealJS/lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="reveal">
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section>
+                <h1>Applications distribuées en .NET</h1>
+                <h3>Event Storming</h3>
+                <p>
+                    <small>Clément Bouillier - <a href="http://www.devcrafting.com">Devcrafting</a> - <a href="http://twitter.com/clem_bouillier">@clem_bouillier</a></small>
+                </p>
+            </section>
+            <!--<section>
+                <section>
+                    <h2></h2>
+                </section>
+                <section>
+                    <h3>
+                        Nos amis pour cette session
+                    </h3>
+                    <ol>
+                        <li>La MSDN sur C# : https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx</li>
+                        <li class="fragment">Mais aussi votre moteur de recherche préféré</li>
+                        <li class="fragment">Object Browser dans Visual Studio</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Quelques contraintes pour s'initier au TDD/TDL et au Pair Programming
+                    </h3>
+                    <ol>
+                        <li>Pair Programming : les 2 personnes sont actives, le clavier DOIT être échangé</li>
+                        <li class="fragment">Quand on n'a pas le clavier, il faut guider l'autre, discuter...pas attendre qu'il ait fini</li>
+                        <li class="fragment">TDD/TDL : cycle red->green->refactor</li>
+                        <li class="fragment">On utilise tous la même norme de code (via StyleCop + R# ?)</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        En pratique pour ce premier TD
+                    </h3>
+                    <ol>
+                        <li>Repository GitHub : git clone https://github.com/devcrafting/Distributed.NETTraining.git (ou fork + clone)</li>
+                        <li class="fragment">Un tag par étape, le tag de l'étape en cours sera affiché dans ce support</li>
+                        <li class="fragment">Pour chaque tag, de nouvelles classes et de nouveaux tests à décommenter au fur et à mesure</li>
+                        <li class="fragment">Pour les tests, on utilise NUnit et NFluent (récupérés via NuGet)</li>
+                    </ol>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Itération 1 : découverte des types et des structures de contrôle</h2>
+                </section>
+                <section>
+                    <h3>
+                        Types primitifs (built-in) -> tag TD1.1.1
+                    </h3>
+                    <ol>
+                        <li class="fragment">Typage fort et statique</li>
+                        <li class="fragment">Conversion de type : cast, Parse, TryParse, ToString...</li>
+                        <li class="fragment">Utilisation de var</li>
+                        <li class="fragment">Nullable : int?, float?...</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Les tableaux -> tag TD1.1.2
+                    </h3>
+                    <ol>
+                        <li class="fragment">Tableau 1 dimension : int[]</li>
+                        <li class="fragment">Tableau N dimension : int[][]</li>
+                        <li class="fragment">Initialisation et taille</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Les structures de contrôle -> tag TD1.1.3
+                    </h3>
+                    <ol>
+                        <li class="fragment">for/foreach</li>
+                        <li class="fragment">while/do while</li>
+                        <li class="fragment">if/else/else if</li>
+                        <li class="fragment">switch/case</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Classes -> tag TD1.1.4
+                    </h3>
+                    <ol>
+                        <li class="fragment">Constructeurs et instanciation</li>
+                        <li class="fragment">Méthodes : déclaration et surcharge</li>
+                        <li class="fragment">Properties : get/set /!\ ne pas en mettre partout</li>
+                        <li class="fragment">Visibilité : public, internal, protected, private, protected internal, readonly</li>
+                        <li class="fragment">Object initializer</li>
+                        <li class="fragment">Constantes : const</li>
+                        <li class="fragment">Static : classes & membres</li>
+                        <li class="fragment">Cycle de vie : garbage collector /!\</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        ValueType : Enum et Struct -> tag TD1.1.5
+                    </h3>
+                    <ol>
+                        <li class="fragment">Pas d'héritage, passage par valeurs VS par référence</li>
+                        <li class="fragment">Enum : Parse, TryParse, ToString, type sous-jacent</li>
+                        <li class="fragment">Mots clés ref</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Retrospective
+                    </h3>
+                    <ol>
+                        <li class="fragment">Qu'est-ce qui c'est bien passé ?</li>
+                        <li class="fragment">Quels ont été les points difficiles ?</li>
+                        <li class="fragment">Qu'est-ce que vous avez appris ?</li>
+                        <li class="fragment">Quels sont les points qui vous perturbent encore ?</li>
+                    </ol>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Itération 2 : programmation orientée objet en C# et autres sujets "de base"</h2>
+                </section>
+                <section>
+                    <h3>
+                        Héritage & polymorphisme -> tag TD1.2.1
+                    </h3>
+                    <ol>
+                        <li class="fragment">Héritage entre classes</li>
+                        <li class="fragment">Classes sealed</li>
+                        <li class="fragment">Virtual, override, new</li>
+                        <li class="fragment">Classes abstraites : abstract</li>
+                        <li class="fragment">Interfaces</li>
+                        <li class="fragment">Composition & polymorphisme</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Génériques -> tag TD1.2.2
+                    </h3>
+                    <ol>
+                        <li class="fragment">Utiliser les génériques : List&lt;T&gt;, IEnumerable&lt;T&gt;</li>
+                        <li class="fragment">Définir une classe générique</li>
+                        <li class="fragment">Définir une interface générique et implémentation non générique</li>
+                        <li class="fragment">Définir une méthode générique (tag TD1.2.2_help si dernier test trop compliqué)</li>
+                        <li class="fragment">Contrainte de type</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Exceptions -> tag TD1.2.3
+                    </h3>
+                    <ol>
+                        <li class="fragment">Try/catch</li>
+                        <li class="fragment">Finally</li>
+                        <li class="fragment">Throw</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Retrospective
+                    </h3>
+                    <ol>
+                        <li class="fragment">Qu'est-ce qui c'est bien passé ?</li>
+                        <li class="fragment">Quels ont été les points difficiles ?</li>
+                        <li class="fragment">Qu'est-ce que vous avez appris ?</li>
+                        <li class="fragment">Quels sont les points qui vous perturbent encore ?</li>
+                    </ol>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Itération 3 : sujets "avancés"</h2>
+                </section>
+                <section>
+                    <h3>
+                        Delegate et Event -> TD1.3.1
+                    </h3>
+                    <ol>
+                        <li class="fragment">Définition et assignation d'un delegate (pointeur de fonction)</li>
+                        <li class="fragment">Expressions Lambda</li>
+                        <li class="fragment">Passage en paramètre</li>
+                        <li class="fragment">Func et Action</li>
+                        <li class="fragment">Event</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        LINQ et expressions Lambda -> TD1.3.2
+                    </h3>
+                    <ol>
+                        <li class="fragment">LINQ : from in/where/select équivalent à une boucle foreach</li>
+                        <li class="fragment">Conversion de l'exemple précédent avec Where(...).Select(...) (=méthodes d'extension)</li>
+                        <li class="fragment">Exploration d'autres méthodes d'extension LINQ</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Retrospective
+                    </h3>
+                    <ol>
+                        <li class="fragment">Qu'est-ce qui c'est bien passé ?</li>
+                        <li class="fragment">Quels ont été les points difficiles ?</li>
+                        <li class="fragment">Qu'est-ce que vous avez appris ?</li>
+                        <li class="fragment">Quels sont les points qui vous perturbent encore ?</li>
+                    </ol>
+                </section>
+            </section>-->
+        </div>
+    </div>
+    <script src="../RevealJS/lib/js/head.min.js"></script>
+    <script src="../RevealJS/js/reveal.min.js"></script>
+    <script>
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            theme: 'night', // available themes are in /css/theme
+            transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Parallax scrolling
+            // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+            // parallaxBackgroundSize: '2100px 900px',
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+            ]
+        });
+
+    </script>
+</body>
+</html>
