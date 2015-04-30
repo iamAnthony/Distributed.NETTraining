@@ -3,6 +3,8 @@ using Nancy;
 
 namespace Messaging.Infrastructure
 {
+    
+
     public class MessagingModule : NancyModule
     {
         public MessagingModule()
