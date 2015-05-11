@@ -6,7 +6,7 @@ namespace Messaging.Infrastructure
 {
     public class TimelineMessageRepository : ITimelineMessageRepository
     {
-        private readonly IEnumerable<TimelineMessage> _initialElements;
+        private List<TimelineMessage> _initialElements;
 
         public TimelineMessageRepository()
         {
@@ -15,7 +15,7 @@ namespace Messaging.Infrastructure
 
         public TimelineMessageRepository(IEnumerable<TimelineMessage> initialElements)
         {
-            _initialElements = initialElements;
+            _initialElements = new List<TimelineMessage>(initialElements);
         }
 
         public IEnumerable<TimelineMessage> GetLastMessagesForUser(UserId userId, int i)
@@ -24,6 +24,11 @@ namespace Messaging.Infrastructure
                 .Where(x => x.OwnerId.Equals(userId))
                 .OrderByDescending(x => x.PublishDate)
                 .Take(i);
+        }
+
+        public void Save(TimelineMessage mp)
+        {
+            _initialElements.Add(mp);
         }
     }
 }

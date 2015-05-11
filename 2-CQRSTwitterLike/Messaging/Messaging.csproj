@@ -44,10 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\MessagePublished.cs" />
     <Compile Include="Domain\TimelineMessage.cs" />
     <Compile Include="Domain\UserId.cs" />
-    <Compile Include="Domain\ITimelineMessageRepository.cs" />
+    <Compile Include="Infrastructure\ITimelineMessageRepository.cs" />
     <Compile Include="Infrastructure\MessagingModule.cs" />
+    <Compile Include="Infrastructure\TimelineMessageProjections.cs" />
     <Compile Include="Infrastructure\TimelineMessageRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
