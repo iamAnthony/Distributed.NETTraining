@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\TimelineMessageProjectionsTests.cs" />
     <Compile Include="Infrastructure\TimelineMessageRepositoryTests.cs" />
     <Compile Include="Domain\TimelineMessageTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
