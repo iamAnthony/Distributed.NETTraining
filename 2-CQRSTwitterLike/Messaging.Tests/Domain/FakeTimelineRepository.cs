@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Messaging.Domain;
 using Messaging.Infrastructure;
 
@@ -28,6 +29,16 @@ namespace Messaging.Tests.Domain
         public void Save(TimelineMessage mp)
         {
             Messages.Add(mp);
+        }
+
+        public TimelineMessage GetTimelineMessageById(long id)
+        {
+            return  Messages.SingleOrDefault(s => s.MessageId.Equals(id));
+        }
+
+        public void Delete(long id)
+        {
+            Messages.RemoveAll(s => s.MessageId.Equals(id));
         }
     }
 }
