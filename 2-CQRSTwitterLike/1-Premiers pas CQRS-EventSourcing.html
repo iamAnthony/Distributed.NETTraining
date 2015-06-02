@@ -238,28 +238,37 @@
             </section>
             <section>
                 <section>
-                    <h2>Itération 3 : agrégats levant des événements en conséquence</h2>
+                    <h2>Itération 3 : agrégats levant des événements en conséquence de commandes</h2>
                 </section>
                 <section>
                     <h3>
-                        Delegate et Event -> TD1.3.1
+                        Agrégat racine (AggregateRoot)
                     </h3>
                     <ol>
-                        <li class="fragment">Définition et assignation d'un delegate (pointeur de fonction)</li>
-                        <li class="fragment">Expressions Lambda</li>
-                        <li class="fragment">Passage en paramètre</li>
-                        <li class="fragment">Func et Action</li>
-                        <li class="fragment">Event</li>
+                        <li class="fragment">Objet garantissant la consistance des changements réalisés en son sein => encapsulation nécessaire (i.e pas de setters, ni de getters)</li>
+                        <li class="fragment">Conserve seulement dans un état interne ce dont il a besoin pour prendre des décisions ultérieures</li>
+                        <li class="fragment">L'état est construit à partir des événements que l'agrégat lève lui-même (ET UNIQUEMENT par ce biais)</li>
+                        <li class="fragment">Cela permet de reconstruire un agrégat à partir de l'historique des événements qui aura été stocké (Event Sourcing)</li>
                     </ol>
                 </section>
                 <section>
                     <h3>
-                        LINQ et expressions Lambda -> TD1.3.2
+                        Pattern Publish/Subscribe
                     </h3>
                     <ol>
-                        <li class="fragment">LINQ : from in/where/select équivalent à une boucle foreach</li>
-                        <li class="fragment">Conversion de l'exemple précédent avec Where(...).Select(...) (=méthodes d'extension)</li>
-                        <li class="fragment">Exploration d'autres méthodes d'extension LINQ</li>
+                        <li class="fragment">Objet gérant la diffusion des événements</li>
+                        <li class="fragment">Différentes utilisations pour les Events : passé en paramètre des méthodes de l'agrégat, conserver une liste des Events non "committés" + Repository.Save, retourner la liste des Events générés par les méthodes de l'agrégat</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>
+                        Agrégat Message et les commandes associées -> tag TD_Agregat_Message
+                    </h3>
+                    <ol>
+                        <li class="fragment">Utiliser la technique du passage en paramère de l'EventPublisher (pattern Publish/Subscribe), avec une interface</li>
+                        <li class="fragment">L'agrégat Message va assurer qu'un message n'est pas republié par son auteur</li>
+                        <li class="fragment">Mais également qu'un message ne peut pas être republié 2 fois par le même compte</li>
+                        <li class="fragment">Ou encore que la suppression ne peut se faire que par l'auteur (/!\ une suppression "administrative" serait gérée par une autre commande)</li>
                     </ol>
                 </section>
                 <section>
