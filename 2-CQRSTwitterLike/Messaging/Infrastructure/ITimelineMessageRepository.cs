@@ -9,5 +9,9 @@ namespace Messaging.Infrastructure
         IEnumerable<TimelineMessage> GetLastMessagesForUser(UserId userId, int i);
 
         void Save(TimelineMessage mp);
+
+        TimelineMessage GetTimelineMessageById(long id);
+
+        void Delete(long originalMessageId);
     }
 }

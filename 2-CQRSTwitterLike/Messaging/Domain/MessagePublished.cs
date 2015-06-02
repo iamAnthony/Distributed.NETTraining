@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messaging.Domain
 {
-    public class MessagePublished
+    public class MessagePublished : IDomainEvent
     {
 
         private static long messageid = 0;
@@ -14,21 +10,14 @@ namespace Messaging.Domain
         private readonly UserId authorId;
         private readonly DateTime publishDate;
         private readonly string content;
-        private readonly int nbRepublish;
 
 
-        public MessagePublished( UserId authorId, DateTime publishDate, string content, int nbRepublish)
+        public MessagePublished( UserId authorId, DateTime publishDate, string content)
         {
             this.myId = ++messageid;
             this.authorId = authorId;
             this.publishDate = publishDate;
             this.content = content;
-            this.nbRepublish = nbRepublish;
-        }
-
-        public static long Messageid
-        {
-            get { return messageid; }
         }
 
         public DateTime PublishDate
@@ -41,10 +30,6 @@ namespace Messaging.Domain
             get { return content; }
         }
 
-        public int NbRepublish
-        {
-            get { return nbRepublish; }
-        }
 
         public long MyId
         {

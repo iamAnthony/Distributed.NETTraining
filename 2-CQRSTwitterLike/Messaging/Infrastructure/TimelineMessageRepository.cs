@@ -30,5 +30,15 @@ namespace Messaging.Infrastructure
         {
             _initialElements.Add(mp);
         }
+
+        public TimelineMessage GetTimelineMessageById(long id)
+        {
+            return _initialElements.SingleOrDefault(s => s.MessageId.Equals(id));
+        }
+
+        public void Delete(long id)
+        {
+            _initialElements.RemoveAll(s => s.MessageId.Equals(id));
+        }
     }
 }

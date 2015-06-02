@@ -8,15 +8,17 @@ namespace Messaging.Domain
         private readonly DateTime _publishDate;
         private readonly UserId _authorId;
         private readonly string _content;
-        private readonly int _nbRepublish;
+        private int _nbRepublish;
+        private readonly long _messageId;
 
-        public TimelineMessage(UserId ownerId, DateTime publishDate, UserId authorId, string content, int nbRepublish)
+        public TimelineMessage(UserId ownerId, DateTime publishDate, UserId authorId, string content, int nbRepublish, long messageId)
         {
             _ownerId = ownerId;
             _publishDate = publishDate;
             _authorId = authorId;
             _content = content;
             _nbRepublish = nbRepublish;
+            _messageId = messageId;
         }
 
         public UserId OwnerId
@@ -42,6 +44,16 @@ namespace Messaging.Domain
         public int NbRepublish
         {
             get { return _nbRepublish; }
+        }
+
+        public long MessageId
+        {
+            get { return _messageId; }
+        }
+
+        public void IncrementNbRepublished()
+        {
+            _nbRepublish++;
         }
     }
 }

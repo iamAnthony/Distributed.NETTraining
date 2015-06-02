@@ -16,9 +16,8 @@ namespace Messaging.Tests.Domain
             var publishDate = DateTime.Now;
             var authorId = new UserId("2");
             var content = "hello";
-            var nbRepublish = 0;
 
-            var messagePublished = new MessagePublished(authorId, publishDate, content, nbRepublish);
+            var messagePublished = new MessagePublished(authorId, publishDate, content);
             // TODO : FakeTimelineRepository is a fake implementation of interface for tests purpose only -> keep it in test assembly
             var timelineMessageRepositoryFake = new FakeTimelineRepository();
             var timelineMessageProjections = new TimelineMessageProjections(timelineMessageRepositoryFake);
@@ -27,7 +26,7 @@ namespace Messaging.Tests.Domain
 
             
 
-            var expectedTimelineMessage = new TimelineMessage(authorId, publishDate, authorId, content, nbRepublish, messagePublished.MyId);
+            var expectedTimelineMessage = new TimelineMessage(authorId, publishDate, authorId, content, 0, messagePublished.MyId);
             Check.That(timelineMessageRepositoryFake.Messages).ContainsExactly(expectedTimelineMessage);
         }
 
@@ -45,10 +44,9 @@ namespace Messaging.Tests.Domain
             var authorId = new UserId("2");
             var republishedMessageAuthor = new UserId("3");
             var content = "hello";
-            var nbRepublish = 0;
 
 
-            var messagePublished = new MessagePublished(authorId, DateTime.Now, content, nbRepublish);
+            var messagePublished = new MessagePublished(authorId, DateTime.Now, content);
 
             var messageRepublished = new MessageRepublished(messagePublished.MyId, republishedMessageAuthor, DateTime.Now );
 
@@ -74,10 +72,9 @@ namespace Messaging.Tests.Domain
             var authorId = new UserId("2");
             var republishedMessageAuthor = new UserId("3");
             var content = "hello";
-            var nbRepublish = 0;
 
 
-            var messagePublished = new MessagePublished(authorId, DateTime.Now, content, nbRepublish);
+            var messagePublished = new MessagePublished(authorId, DateTime.Now, content);
 
             var timelineMessageRepositoryFake = new FakeTimelineRepository();
             var timelineMessageProjections = new TimelineMessageProjections(timelineMessageRepositoryFake);
